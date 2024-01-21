@@ -1,0 +1,74 @@
+// Created by jrdnh 2024-04-15
+// https://jrdnh.github.io/posts/create-a-multifamily-financial-model-in-python/
+
+{
+  "ref_date": "2019-12-31",
+  "freq": {
+    "months": 1
+  },
+  "effective_gross_income": {
+    "ref_date": "2019-12-31",
+    "freq": {
+      "years": 1
+    },
+    "avg_vacancy_rate": {
+      "ref_date": "2019-12-31",
+      "freq": {
+        "years": 1
+      },
+      "vacancy_rates": [
+        0.1,
+        0.075,
+        0.05
+      ]
+    },
+    "gross_potential_rent": {
+      "ref_date": "2019-12-31",
+      "freq": {
+        "years": 1
+      },
+      "sf": 180000,
+      "avg_monthly_rent_psf": {
+        "ref_date": "2019-12-31",
+        "freq": {
+          "years": 1
+        },
+        "initial_rent_psf": 3.16,
+        "rent_growth_rate": 0.02
+      }
+    }
+  },
+  "total_expenses": {
+    "ref_date": "2019-12-31",
+    "freq": {
+      "years": 1
+    },
+    "operating_expenses": {
+      "ref_date": "2019-12-31",
+      "freq": {
+        "years": 1
+      },
+      "units": 230,
+      "initial_opex_pu": -3300.0,
+      "opex_growth_rate": 0.02
+    },
+    "real_estate_taxes": {
+      "ref_date": "2019-12-31",
+      "freq": {
+        "years": 1
+      },
+      "sf": 180000,
+      "monthly_re_tax_psf": -0.3,
+      "ret_growth_rate": 0.02
+    },
+    "replacement_reserves": {
+      "ref_date": "2019-12-31",
+      "freq": {
+        "years": 1
+      },
+      "units": 230,
+      "annual_reserves_pu": -300.0,
+      "rr_growth_rate": 0.02
+    }
+  }
+}
