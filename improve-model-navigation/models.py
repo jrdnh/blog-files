@@ -97,8 +97,8 @@ RelativeDelta = Annotated[relativedelta, RelativeDeltaAnnotation]
 # Node class
 T = TypeVar('T', bound='Node')
 
-class Node[P: 'Node'](BaseModel):
-    """Node class that provides helper functions to navigate up the tree."""
+
+class Node[P](BaseModel):
     _parent: Optional[weakref.ref] = None
 
     def model_post_init(self, __context: Any) -> None:
@@ -113,13 +113,18 @@ class Node[P: 'Node'](BaseModel):
 
     @property
     def parent(self) -> P:
-        """Weakref to parent node or None."""
+        """Parent node or None."""
         return self._parent() if self._parent is not None else None
     
     @parent.setter
-    def parent(self, parent: Optional['Node'] = None):
-        """Set weakref to parent node or None."""
+    def parent(self, parent: Optional[P] = None):
+        """Set parent."""
         self._parent = weakref.ref(parent) if parent is not None else None
+    
+    def set_parent(self, parent: P):
+        """Set parent and return self."""
+        self.parent = parent
+        return self
     
     def find_parent(self, cls: Type[T]) -> T:
         """Find first parent node with class `cls`."""
@@ -133,7 +138,7 @@ class Node[P: 'Node'](BaseModel):
 
 ####################
 # Fixed interval driver class
-class FixedIntervalSeries(Node):
+class FixedIntervalSeries[P](Node[P]):
     """
     Class that yields dates with a fixed interval duration.
 

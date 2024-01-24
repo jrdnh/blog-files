@@ -98,8 +98,8 @@ class GrossPotentialRent(FixedIntervalSeries):
 class Vacancy(FixedIntervalSeries['EffectiveGrossIncome']):
     def __call__(self, from_dt: date, to_dt: date):
         """Vacancy from but excluding `from_dt` to and including `to_dt`."""
-        self.parent
-        return -sumproduct(from_dt, to_dt, self.parent.gross_potential_rent, self.parent.avg_vacancy_rate)
+        egi = self.parent
+        return -sumproduct(from_dt, to_dt, egi.gross_potential_rent, egi.avg_vacancy_rate)
 
 
 class EffectiveGrossIncome(FixedIntervalSeries):
@@ -197,7 +197,15 @@ class TotalExpenses(FixedIntervalSeries):
         )
 
 
+class NetOperatingIncome(FixedIntervalSeries):
+    effective_gross_income: EffectiveGrossIncome
+    total_expenses: TotalExpenses
 
+    def __call__(self, from_dt: date, to_dt: date):
+        """Net operating income from but excluding `from_dt` to and including `to_dt`."""
+        return self.effective_gross_income(from_dt, to_dt) + self.total_expenses(
+            from_dt, to_dt
+        )
 
 
 ###########
@@ -266,16 +274,6 @@ noi_json = noi.model_dump_json(indent=2)
 # with open("noi.json", "w") as f:
 #     f.write(noi_json)
 
-# Create model from json
-import json
-import urllib.request
-# import this if you are in a different file/interpreter
-# from companion import NetOperatingIncome 
-
-url = 'https://gist.githubusercontent.com/jrdnh/377f13e0ed0e6ac975b5d36156dd27f5/raw/44bb448d60ff6aae9cc5f5d9472edf9e0c0b85d3/noi.json'
-with urllib.request.urlopen(url) as response:
-   noi = NetOperatingIncome.model_validate_json(response.read())
-
 
 # Model results
 if __name__ == '__main__':
@@ -284,7 +282,7 @@ if __name__ == '__main__':
     noi(date(2019, 12, 31), date(2020, 12, 31))
 
     # average monthly rent psf between 2021-06-02 and 2023-09-27
-    noi.effective_gross_income.gross_potential_rent.avg_monthly_rent_psf(date(2021, 6, 2), date(2023, 9, 27))*
+    noi.effective_gross_income.gross_potential_rent.avg_monthly_rent_psf(date(2021, 6, 2), date(2023, 9, 27))
 
     periods = [p for p in pairwise(islice(noi.periods(), 121))]
     [noi(*p) for p in periods]
@@ -292,6 +290,7 @@ if __name__ == '__main__':
 
     # Display and export results
     from itertools import pairwise
+    import json
     from utils import field_values, flatten
     from models import RelativeDelta
 
